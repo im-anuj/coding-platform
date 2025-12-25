@@ -1,6 +1,10 @@
-const express = require('express')
-const app = express()
-const port = 3000
+const express = require('express');
+const bcrypt = require("bcryptjs");
+
+const app = express();
+const PORT = 3000
+
+app.use(express.json());
 
 const USERS = [];
 
@@ -18,33 +22,47 @@ const SUBMISSION = [
 
 ]
 
-app.post('/signup', function(req, res) {
-  // Add logic to decode body
-  // body should have email and password
+app.post('/signup', async (req, res) => {
+  const { email, password } = req.body;
+  if(!email || !password){
+    return res.status(400).json({ message: "Email and Password required"});
+  }
 
+  const userExist = USERS.find(u => u.email === email);
+  if(userExist){
+    return res.status(400).json({ message: "User already exist"});
+  }
 
-  //Store email and password (as is for now) in the USERS array above (only if the user with the given email doesnt exist)
+  const hashedPassword = await bcrypt.hash(password, 10);
 
+  USERS.push({
+    id: USERS.length+1,
+    email,
+    password: hashedPassword
+  });
 
-  // return back 200 status code to the client
-  res.send('Hello World!')
-})
+  res.status(201).json({ message: "User created successfully"});
+});
 
-app.post('/login', function(req, res) {
-  // Add logic to decode body
-  // body should have email and password
+app.post('/login', async (req, res) => {
+  const {email, password} = req.body;
 
-  // Check if the user with the given email exists in the USERS array
-  // Also ensure that the password is the same
+  const user = USERS.find(u => u.email === email);
+  if(!user){
+    return res.status(400).json({message: "Invalid Email or Password"});
+  }
 
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  if(!isPasswordCorrect){
+    return res.status(400).json({ message: "Invalid Password"});
+  }
 
-  // If the password is the same, return back 200 status code to the client
-  // Also send back a token (any random string will do for now)
-  // If the password is not the same, return back 401 status code to the client
+  res.json({message: "Login successfull"});
+});
 
-
-  res.send('Hello World from route 2!')
-})
+app.get("/users", (req, res) => {
+  res.json(USERS);
+});
 
 app.get('/questions', function(req, res) {
 
@@ -68,6 +86,6 @@ app.post("/submissions", function(req, res) {
 // Create a route that lets an admin add a new problem
 // ensure that only admins can do that.
 
-app.listen(port, function() {
-  console.log(`Example app listening on port ${port}`)
+app.listen(PORT, () => {
+  console.log(`Port is running at http://localhost${PORT}`)
 })
