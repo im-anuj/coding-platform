@@ -18,9 +18,7 @@ const QUESTIONS = [{
 }];
 
 
-const SUBMISSION = [
-
-]
+const SUBMISSION = []
 
 app.post('/signup', async (req, res) => {
   const { email, password } = req.body;
@@ -64,22 +62,63 @@ app.get("/users", (req, res) => {
   res.json(USERS);
 });
 
-app.get('/questions', function(req, res) {
-
+app.get('/questions', (req, res) => {
+  res.json({
+    success: true,
+    questions: QUESTIONS
+  });
   //return the user all the questions in the QUESTIONS array
-  res.send("Hello World from route 3!")
-})
+});
 
-app.get("/submissions", function(req, res) {
+//fake logged in user for now
+const CURRENT_USER_ID = 1;
+
+app.get("/submissions/:questionId", (req, res) => {
+  const questionId = Number(req.params.questionId);
+
+  const userSubmissions = SUBMISSION.filter((s) => {
+    return s.userId === CURRENT_USER_ID &&
+           s.questionId === questionId;
+  });
+
+  res.json({
+    success: true,
+    SUBMISSION: userSubmissions
+  });
    // return the users submissions for this problem
-  res.send("Hello World from route 4!")
 });
 
 
-app.post("/submissions", function(req, res) {
+app.post("/submissions/:questionId", (req, res) => {
+  const questionId = Number(req.params.questionId);
+  const { code } = req.body;
+
+  if(!code){
+    return res.status(400).json({
+      success: false,
+      message: "Code is required"
+    });
+  }
+
+  const status = Math.random() > 0.5 ? "ACCEPTED" : "REJECTED";
+
+  const submission = {
+    id: SUBMISSION.length + 1,
+    userId: CURRENT_USER_ID,
+    questionId,
+    code,
+    status,
+    submittedAt: new Date()
+  }
+
+  SUBMISSION.push(submission);
+
+  res.json({
+    success: true,
+    submission
+  })
    // let the user submit a problem, randomly accept or reject the solution
    // Store the submission in the SUBMISSION array above
-  res.send("Hello World from route 4!")
 });
 
 // leaving as hard todos
