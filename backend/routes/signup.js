@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { users } from "../data/users.js";
 
 const router = express.Router();
+let USER_ID_COUNTER = 1;
 
 router.post("/", async(req, res) => {
   const {email, password} = req.body;
@@ -19,7 +20,7 @@ router.post("/", async(req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   users.push({
-    id: users.length + 1,
+    id: USER_ID_COUNTER++,
     email,
     password: hashedPassword
   });

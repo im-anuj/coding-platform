@@ -1,24 +1,25 @@
 import express from "express";
+import { auth } from "../middleware/auth.js";
 import { submissions } from "../data/submissions.js";
 
 const router = express.Router();
 
 const CURRENT_USER_ID = 1;
 
-router.get("/:questionId", (req, res) => {
-  const questionId = Number(req.params.questionId);
+router.get("/:questionId", auth, (req, res) => {
+  const questionId = req.params.questionId;
 
   const userSubmissions = submissions.filter((s) => { 
-    return s.userId === CURRENT_USER_ID &&  
+    return s.userId === req.userId &&  
     s.questionId === questionId
   });
 
-  return res.json({
+  res.json({
     submissions: userSubmissions
   });
 });
 
-router.post("/", (req, res) => {
+router.post("/", auth, (req, res) => {
   const questionId = req.body.questionId;
   const code =  req.body.code;
 
@@ -30,7 +31,7 @@ router.post("/", (req, res) => {
 
   const submission = {
     submissionId: submissions.length + 1,
-    userId: CURRENT_USER_ID,
+    userId: req.userId,
     questionId,
     code,
     status,
