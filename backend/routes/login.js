@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post("/", async (req, res) => {
   const {email, password} = req.body;
-  if(!email || password){
+  if(!email || !password){
     return res.status(400).json({message: "Email and Password Required"});
   }
   const user = users.find(u => u.email === email);
