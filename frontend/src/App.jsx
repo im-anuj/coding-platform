@@ -1,8 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import QuestionsPage from './pages/QuestionsPage';
+import QuestionPage from './pages/QuestionPage';
 import './App.css';
 
 function App() {
@@ -22,6 +23,30 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/question/:id"
+          element={
+            <ProtectedRoute>
+              <QuestionPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* Default Route - Redirect to questions if logged in, else login */}
+        <Route
+          path="/"
+          element={
+            localStorage.getItem('authorization') ? (
+              <Navigate to="/questions" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        
+        {/* Catch all - redirect to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+
       </Routes>
     </Router>
   );

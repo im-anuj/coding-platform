@@ -27,7 +27,7 @@ router.post("/", auth, (req, res) => {
     return res.status(400).json({ message: "Code required"});
   }
 
-  const status = Math.random() > 0.5 ? "ACCEPTED" : "REJECTED";
+  const status = Math.random() > 0.5 ? "accepted" : "rejected";
 
   const submission = {
     submissionId: submissions.length + 1,
