@@ -7,10 +7,10 @@ export function auth(req, res, next) {
     return res.status(401).json({ message: "Token missing" });
   }
 
-  const token = authHeader.split(" ")[1];
+  // const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(authHeader, JWT_SECRET);
 
     req.userId = decoded.userId;
     next();
