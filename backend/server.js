@@ -7,7 +7,7 @@ import questionsRoute from "./routes/questions.js";
 import submissionsRoute from "./routes/submissions.js";
 
 const app = express();
-const PORT = 3000
+const PORT = process.env.PORT || 3000
 
 app.use(cors());
 app.use(express.json());
@@ -21,6 +21,6 @@ app.use("/me", profileRoute);
 app.use("/questions", questionsRoute);
 app.use("/submissions", submissionsRoute);
 
-app.listen(PORT, () => {
-  console.log(`Port is running at http://localhost${PORT}`)
-})
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server is running on port ${PORT}`);
+});
