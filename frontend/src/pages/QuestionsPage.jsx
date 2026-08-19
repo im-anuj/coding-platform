@@ -66,7 +66,7 @@ export default function QuestionsPage() {
             </thead>
             <tbody>
               {questions.map((q) => (
-                <tr key={q.questionId} className="questions-table-row">
+                <tr key={q.questionId} className="questions-table-row" onClick={() => navigate(`/question/${q.questionId}`)}>
                   <td>{q.title}</td>
                   <td>
                     <span className={`questions-difficulty questions-difficulty-${q.difficulty.toLowerCase()}`}>
@@ -76,7 +76,6 @@ export default function QuestionsPage() {
                   <td className="questions-acceptance">{q.acceptance}</td>
                   <td className="questions-action">
                     <button
-                      onClick={() => navigate(`/question/${q.questionId}`)}
                       className="questions-view-btn"
                     >
                       <ChevronRightSvg />
